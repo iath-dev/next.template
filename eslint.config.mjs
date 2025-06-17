@@ -1,10 +1,6 @@
 // eslint.config.mjs
-import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import nextPlugin from '@next/eslint-plugin-next';
 import prettierPlugin from 'eslint-plugin-prettier';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import globals from 'globals';
 import { FlatCompat } from '@eslint/eslintrc';
 
 // Necesario para configuraciones heredadas
@@ -12,13 +8,10 @@ const compat = new FlatCompat();
 
 export default tseslint.config(
   {
-    // Configuración base
     ignores: ['.next/', 'node_modules/', 'dist/'],
   },
-  // Configuración para TypeScript
   ...tseslint.configs.recommended,
   ...tseslint.configs.stylistic,
-  // Configuración para Next.js (usando compatibilidad)
   ...compat.config({
     extends: [
       'plugin:@next/next/recommended',
@@ -29,61 +22,24 @@ export default tseslint.config(
     }
   }),
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.js'],
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      'simple-import-sort': simpleImportSort,
+      // ... otros plugins
       'prettier': prettierPlugin,
-      '@next/next': nextPlugin,
-    },
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        React: true,
-        JSX: true,
-      },
-      parser: tseslint.parser,
-      parserOptions: {
-        project: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
     },
     rules: {
-      // Reglas base
-      'no-console': 'warn',
-      'no-unused-vars': 'off',
-      
-      // TypeScript
-      '@typescript-eslint/no-unused-vars': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/consistent-type-imports': 'error',
-      
-      // Organización de imports
-      'simple-import-sort/imports': [
+      // ... otras reglas
+      'prettier/prettier': [
         'error',
         {
-          groups: [
-            ['^react', '^next'],
-            ['^@?\\w'],
-            ['^(@components|@utils|@lib|@styles)(/.*|$)'],
-            ['^\\.'],
-            ['^.+\\.(css|scss)$'],
-          ],
-        },
+          endOfLine: 'auto',
+          semi: true,
+          trailingComma: 'es5',
+          singleQuote: true,
+          printWidth: 100,
+          tabWidth: 2
+        }
       ],
-      'simple-import-sort/exports': 'error',
-      
-      // Prettier
-      'prettier/prettier': 'error',
-    },
-  },
-  {
-    // Configuración para archivos JavaScript (opcional)
-    files: ['**/*.js'],
-    extends: [eslint.configs.recommended],
-    languageOptions: {
-      globals: globals.browser,
-    },
+    }
   }
 );
